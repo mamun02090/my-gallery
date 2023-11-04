@@ -14,6 +14,9 @@ const Gallery: React.FC = () => {
   //create a new context for selected image context
   const context = useContext(ImageContext);
 
+  const [isDragging, setIsDragging] = useState(false);
+  const [position, setPosition] = useState({ x: 0, y: 0 });
+  const [startPos, setStartPos] = useState({ x: 0, y: 0 });
   //to track the drag start item
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const dragItem = useRef<any>(null);
@@ -53,6 +56,29 @@ const Gallery: React.FC = () => {
     setActiveImages(_activeImage);
   };
 
+  const handleTouchStart = (event: React.TouchEvent<HTMLDivElement>) => {
+    const touch = event.touches[0];
+    setStartPos({ x: touch.clientX, y: touch.clientY });
+    setIsDragging(true);
+  };
+
+  const handleTouchMove = (event: React.TouchEvent<HTMLDivElement>) => {
+    if (isDragging) {
+      const touch = event.touches[0];
+      const deltaX = touch.clientX - startPos.x;
+      const deltaY = touch.clientY - startPos.y;
+      setPosition({
+        x: position.x + deltaX,
+        y: position.y + deltaY,
+      });
+      setStartPos({ x: touch.clientX, y: touch.clientY });
+    }
+  };
+
+  const handleTouchEnd = () => {
+    setIsDragging(false);
+  };
+
   return (
     <GalleryCard className="xl:max-w-[1180px] lg:max-w-[972px] md:max-w-[744px] media510:max-w-[500px] mx-auto">
       <div className="flex flex-col  gap-5 items-center ">
@@ -89,13 +115,14 @@ const Gallery: React.FC = () => {
           {activeImages.map((image, index) => {
             return (
               <div
+                key={index}
                 draggable
                 onDragStart={() => (dragItem.current = index)}
                 onDragEnter={() => (dragOverItem.current = index)}
                 onDragEnd={handleReordering}
-                onTouchStart={() => (dragItem.current = index)}
-                onTouchMove={() => (dragOverItem.current = index)}
-                onTouchEnd={handleReordering}
+                onTouchStart={() => handleTouchStart}
+                onTouchMove={() => handleTouchMove}
+                onTouchEnd={handleTouchEnd}
                 className={classNames({
                   "col-span-2 row-span-2": index === 0,
                   " cursor-pointer": true,
