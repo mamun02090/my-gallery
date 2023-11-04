@@ -93,6 +93,9 @@ const Gallery: React.FC = () => {
                 onDragStart={() => (dragItem.current = index)}
                 onDragEnter={() => (dragOverItem.current = index)}
                 onDragEnd={handleReordering}
+                onTouchStart={() => (dragItem.current = index)}
+                onTouchMove={() => (dragOverItem.current = index)}
+                onTouchEnd={handleReordering}
                 className={classNames({
                   "col-span-2 row-span-2": index === 0,
                   " cursor-pointer": true,
