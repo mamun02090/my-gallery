@@ -1,6 +1,7 @@
 import React, { useState, useContext } from "react";
-import { Props } from "./type";
 import classNames from "clsx";
+
+import { Props } from "./type";
 import { ImageContext } from "../../contexts/SelectedImageContext";
 
 const ImageCard: React.FC<React.PropsWithChildren<Props>> = (props) => {
@@ -13,12 +14,14 @@ const ImageCard: React.FC<React.PropsWithChildren<Props>> = (props) => {
   }
 
   const { selectedImage, setSelectedImage } = context;
-  console.log(selectedImage);
+
   const changeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
     const checked = e.target.checked;
     if (checked) {
+      //add checked image to selected image
       setSelectedImage((prev) => [...prev, id]);
     } else {
+      //remove unchecked image from selected image
       const checkedImages = selectedImage.filter((image) => image != id);
       setSelectedImage(checkedImages);
     }

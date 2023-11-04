@@ -9,13 +9,6 @@ export default {
         media380: "380px",
         media330: "330px",
         media300: "300px",
-        tablet: "640px",
-        iPad: "768px",
-        laptop: "1024px",
-        desktop: "1280px",
-        large: "1360px",
-        larger: "1660px",
-        largest: "2440px",
       },
 
       backgroundColor: {

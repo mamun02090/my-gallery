@@ -5,6 +5,7 @@ import { Props } from "./type";
 
 const Card: React.FC<React.PropsWithChildren<Props>> = (props) => {
   const { children, className = "" } = props;
+
   return (
     <div
       className={classNames({

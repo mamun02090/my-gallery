@@ -1,6 +1,6 @@
 import { SelectedImageProvider } from "./contexts/SelectedImageContext";
-import Gallery from "./features/Gallery/Gallery";
 
+import Gallery from "./features/Gallery/Gallery";
 import { mediaQuery } from "./shared/constants";
 
 function App() {

@@ -1,44 +1,58 @@
 import React, { useContext, useState, useRef } from "react";
+import { ImImage } from "react-icons/im";
+import classNames from "clsx";
+
 import { Image } from "./type";
 import ImageCard from "../../components/ImageCard/ImageCard";
-import classNames from "clsx";
 import GalleryCard from "../../components/GalleryCard/GalleryCard";
 import { ImageContext } from "../../contexts/SelectedImageContext";
 import { images } from "../../shared/constants";
-import { ImImage } from "react-icons/im";
 
 const Gallery: React.FC = () => {
+  //state to track images after the deletion
   const [activeImages, setActiveImages] = useState<Image[]>(images);
+  //create a new context for selected image context
   const context = useContext(ImageContext);
+
+  //to track the drag start item
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const dragItem = useRef<any>(null);
+
+  //to track the drag enter item
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const dragOverItem = useRef<any>(null);
 
+  //to handle undefined context
   if (!context) {
     return null;
   }
 
   const { selectedImage, setSelectedImage } = context;
 
+  //delete selected image
   const deleteFiles = () => {
+    //filter out the selected image
     const filteredImage = activeImages.filter(
       (image) => !selectedImage.includes(image.id)
     );
     setActiveImages(filteredImage);
     setSelectedImage([]);
   };
+
+  //handle the reordering by dragging the image
   const handleReordering = () => {
     const _activeImage = [...activeImages];
     const draggedItem = _activeImage.splice(dragItem.current, 1)[0];
 
     _activeImage.splice(dragOverItem.current, 0, draggedItem);
-    //reset
+    //reset the reference
     dragItem.current = null;
     dragOverItem.current = null;
 
+    //update the dragged images
     setActiveImages(_activeImage);
   };
+
   return (
     <GalleryCard className="xl:max-w-[1180px] lg:max-w-[972px] md:max-w-[744px] media510:max-w-[500px] mx-auto">
       <div className="flex flex-col  gap-5 items-center ">
@@ -85,7 +99,7 @@ const Gallery: React.FC = () => {
                 })}
               >
                 <ImageCard
-                  imageSource={`http://localhost:5173/public/images/${image.imageSource}`}
+                  imageSource={`/images/${image.imageSource}`}
                   index={index}
                   id={image.id}
                 />

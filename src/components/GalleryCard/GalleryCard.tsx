@@ -1,4 +1,5 @@
 import React, { PropsWithChildren } from "react";
+
 import Card from "../card/Card";
 import { Props } from "./type";
 
