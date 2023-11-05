@@ -1,33 +1,34 @@
-import React, { useContext, useState, useRef } from "react";
+import React, { useContext, useCallback } from "react";
 import { ImImage } from "react-icons/im";
 import classNames from "clsx";
 
-import { Image } from "./type";
 import ImageCard from "../../components/ImageCard/ImageCard";
 import GalleryCard from "../../components/GalleryCard/GalleryCard";
 import { ImageContext } from "../../contexts/SelectedImageContext";
-import { images } from "../../shared/constants";
 
 const Gallery: React.FC = () => {
   //state to track images after the deletion
-  const [activeImages, setActiveImages] = useState<Image[]>(images);
+
   //create a new context for selected image context
   const context = useContext(ImageContext);
 
-  //to track the drag start item
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const dragItem = useRef<any>(null);
+  const moveImage = useCallback((dragIndex: number, hoverIndex: number) => {
+    setActiveImages((prevCards) => {
+      const clonedCards = [...prevCards];
+      const removedItem = clonedCards.splice(dragIndex, 1)[0];
 
-  //to track the drag enter item
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const dragOverItem = useRef<any>(null);
+      clonedCards.splice(hoverIndex, 0, removedItem);
+      return clonedCards;
+    });
+  }, []);
 
   //to handle undefined context
   if (!context) {
     return null;
   }
 
-  const { selectedImage, setSelectedImage } = context;
+  const { selectedImage, setSelectedImage, activeImages, setActiveImages } =
+    context;
 
   //delete selected image
   const deleteFiles = () => {
@@ -37,20 +38,6 @@ const Gallery: React.FC = () => {
     );
     setActiveImages(filteredImage);
     setSelectedImage([]);
-  };
-
-  //handle the reordering by dragging the image
-  const handleReordering = () => {
-    const _activeImage = [...activeImages];
-    const draggedItem = _activeImage.splice(dragItem.current, 1)[0];
-
-    _activeImage.splice(dragOverItem.current, 0, draggedItem);
-    //reset the reference
-    dragItem.current = null;
-    dragOverItem.current = null;
-
-    //update the dragged images
-    setActiveImages(_activeImage);
   };
 
   return (
@@ -89,14 +76,7 @@ const Gallery: React.FC = () => {
           {activeImages.map((image, index) => {
             return (
               <div
-                key={index}
-                draggable
-                onDragStart={() => (dragItem.current = index)}
-                onDragEnter={() => (dragOverItem.current = index)}
-                onDragEnd={handleReordering}
-                onTouchStartCapture={() => (dragItem.current = index)}
-                onTouchMoveCapture={() => (dragOverItem.current = index)}
-                onTouchEnd={handleReordering}
+                key={image.id}
                 className={classNames({
                   "col-span-2 row-span-2": index === 0,
                   " cursor-pointer": true,
@@ -106,10 +86,12 @@ const Gallery: React.FC = () => {
                   imageSource={`/images/${image.imageSource}`}
                   index={index}
                   id={image.id}
+                  moveImage={moveImage}
                 />
               </div>
             );
           })}
+
           <div className="border border-gray border-dashed rounded h-full w-full flex items-center justify-center">
             <div className="flex items-center flex-col gap-2">
               <ImImage className="w-8 h-8" />

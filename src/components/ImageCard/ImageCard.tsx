@@ -1,13 +1,62 @@
 import React, { useState, useContext } from "react";
 import classNames from "clsx";
+import { useDrag, useDrop } from "react-dnd";
 
 import { Props } from "./type";
 import { ImageContext } from "../../contexts/SelectedImageContext";
 
 const ImageCard: React.FC<React.PropsWithChildren<Props>> = (props) => {
-  const { className = "", imageSource, index, id } = props;
+  const { className = "", imageSource, index, id, moveImage } = props;
   const [isImageHover, setIsImageHover] = useState<boolean>(false);
   const context = useContext(ImageContext);
+  const ref = React.useRef(null);
+
+  const [, drop] = useDrop({
+    accept: "image",
+    hover: (item, monitor) => {
+      if (!ref.current) {
+        return;
+      }
+      const dragIndex = item.index;
+      const hoverIndex = index;
+
+      if (dragIndex === hoverIndex) {
+        return;
+      }
+
+      const hoverBoundingRect = ref.current?.getBoundingClientRect();
+
+      const hoverMiddleY =
+        (hoverBoundingRect.bottom - hoverBoundingRect.top) / 2;
+
+      const clientOffset = monitor.getClientOffset();
+      const hoverClientY = clientOffset.y - hoverBoundingRect.top;
+
+      if (dragIndex < hoverIndex && hoverClientY < hoverMiddleY) {
+        return;
+      }
+
+      if (dragIndex > hoverIndex && hoverClientY > hoverMiddleY) {
+        return;
+      }
+
+      moveImage(dragIndex, hoverIndex);
+
+      item.index = hoverIndex;
+    },
+  });
+
+  const [{ isDragging }, drag] = useDrag({
+    type: "image",
+    item: () => {
+      return { id, index };
+    },
+    collect: (monitor) => {
+      return {
+        isDragging: monitor.isDragging(),
+      };
+    },
+  });
 
   if (!context) {
     return null;
@@ -26,8 +75,14 @@ const ImageCard: React.FC<React.PropsWithChildren<Props>> = (props) => {
       setSelectedImage(checkedImages);
     }
   };
+
+  const opacity = isDragging ? 0 : 1;
+  drag(drop(ref));
+
   return (
     <div
+      ref={ref}
+      style={{ opacity }}
       className={classNames({
         " md:w-[436px] md:h-[500px]": index === 0,
         "relative  border flex border-gray rounded": true,

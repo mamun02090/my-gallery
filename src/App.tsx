@@ -1,14 +1,15 @@
 import { SelectedImageProvider } from "./contexts/SelectedImageContext";
 
+import { DndProvider } from "react-dnd";
+import { HTML5Backend } from "react-dnd-html5-backend";
 import Gallery from "./features/Gallery/Gallery";
-import { mediaQuery } from "./shared/constants";
 
 function App() {
   return (
     <SelectedImageProvider>
-      <div className={`py-20 ${mediaQuery}`}>
+      <DndProvider backend={HTML5Backend}>
         <Gallery />
-      </div>
+      </DndProvider>
     </SelectedImageProvider>
   );
 }
