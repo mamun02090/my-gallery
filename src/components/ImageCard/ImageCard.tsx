@@ -1,6 +1,6 @@
 import React, { useState, useContext } from "react";
 import classNames from "clsx";
-import { useDrag, useDrop } from "react-dnd";
+import { DropTargetMonitor, useDrag, useDrop } from "react-dnd";
 
 import { Props } from "./type";
 import { ImageContext } from "../../contexts/SelectedImageContext";
@@ -9,11 +9,15 @@ const ImageCard: React.FC<React.PropsWithChildren<Props>> = (props) => {
   const { className = "", imageSource, index, id, moveImage } = props;
   const [isImageHover, setIsImageHover] = useState<boolean>(false);
   const context = useContext(ImageContext);
-  const ref = React.useRef(null);
+  const ref = React.useRef<HTMLDivElement | null>(null);
 
+  type Item = {
+    id: number;
+    index: number;
+  };
   const [, drop] = useDrop({
     accept: "image",
-    hover: (item, monitor) => {
+    hover: (item: Item, monitor: DropTargetMonitor) => {
       if (!ref.current) {
         return;
       }
@@ -30,7 +34,10 @@ const ImageCard: React.FC<React.PropsWithChildren<Props>> = (props) => {
         (hoverBoundingRect.bottom - hoverBoundingRect.top) / 2;
 
       const clientOffset = monitor.getClientOffset();
-      const hoverClientY = clientOffset.y - hoverBoundingRect.top;
+      let hoverClientY = 0;
+      if (clientOffset) {
+        hoverClientY = clientOffset.y - hoverBoundingRect.top;
+      }
 
       if (dragIndex < hoverIndex && hoverClientY < hoverMiddleY) {
         return;
