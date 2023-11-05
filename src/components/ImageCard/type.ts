@@ -3,4 +3,5 @@ export interface Props {
   imageSource: string;
   index: number;
   id: number;
+  moveImage: (dragIndex: number, hoverIndex: number) => void;
 }

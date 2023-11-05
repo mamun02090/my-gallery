@@ -1,17 +1,16 @@
-import { mediaQuery } from "./shared/constants";
 import { SelectedImageProvider } from "./contexts/SelectedImageContext";
-import DragContext from "./components/DragContext/DragContext";
-import Test from "./components/Test";
+
+import { DndProvider } from "react-dnd";
+import { HTML5Backend } from "react-dnd-html5-backend";
+import Gallery from "./features/Gallery/Gallery";
 
 function App() {
   return (
-    // <DragDropContext onDragEnd={() => {}}>
     <SelectedImageProvider>
-      <div className={`py-20 ${mediaQuery}`}>
-        <Test />
-      </div>
+      <DndProvider backend={HTML5Backend}>
+        <Gallery />
+      </DndProvider>
     </SelectedImageProvider>
-    // </DragDropContext>
   );
 }
 

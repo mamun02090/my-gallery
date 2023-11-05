@@ -19,9 +19,16 @@ function DragContext() {
       return;
     }
     const dragItem = activeImages[source.index];
-    console.log(destination.index, source.index);
+    console.log(destination, source);
     activeImages.splice(source.index, 1);
     console.log(activeImages);
+    const destDropId = destination.droppableId;
+    const tmp = destDropId;
+    destination.droppableId = source.droppableId;
+    source.droppableId = tmp;
+    const tmpDestIndex = destination.index;
+    destination.index = source.index;
+    source.index = tmpDestIndex;
     activeImages.splice(destination.index, 0, dragItem);
     setActiveImages(activeImages);
   };

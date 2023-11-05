@@ -1,9 +1,0 @@
-.drag {
-  touch-action: none;
-  -ms-touch-action: none;
-  box-shadow: 2px 20px 30px rgba(0, 0, 0, 0.2);
-}
-.container-touch {
-  touch-action: none;
-  -ms-touch-action: none;
-}

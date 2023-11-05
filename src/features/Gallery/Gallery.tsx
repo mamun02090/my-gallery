@@ -1,17 +1,26 @@
-import React, { useContext } from "react";
+import React, { useContext, useCallback } from "react";
 import { ImImage } from "react-icons/im";
 import classNames from "clsx";
 
 import ImageCard from "../../components/ImageCard/ImageCard";
 import GalleryCard from "../../components/GalleryCard/GalleryCard";
 import { ImageContext } from "../../contexts/SelectedImageContext";
-import { Draggable, Droppable } from "react-beautiful-dnd";
 
 const Gallery: React.FC = () => {
   //state to track images after the deletion
 
   //create a new context for selected image context
   const context = useContext(ImageContext);
+
+  const moveImage = useCallback((dragIndex: number, hoverIndex: number) => {
+    setActiveImages((prevCards) => {
+      const clonedCards = [...prevCards];
+      const removedItem = clonedCards.splice(dragIndex, 1)[0];
+
+      clonedCards.splice(hoverIndex, 0, removedItem);
+      return clonedCards;
+    });
+  }, []);
 
   //to handle undefined context
   if (!context) {
@@ -62,41 +71,34 @@ const Gallery: React.FC = () => {
             </h2>
           )}
         </div>
-        <Droppable droppableId="Gallery">
-          {(provided) => (
-            <div
-              {...provided.droppableProps}
-              ref={provided.innerRef}
-              className="grid mx-auto gap-2 sm:gap-3 px-2 md:gap-5 grid-cols-3 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 pb-5 justify-center items-center content-center justify-items-center  "
-            >
-              {activeImages.map((image, index) => {
-                return (
-                  <div
-                    key={index}
-                    className={classNames({
-                      "col-span-2 row-span-2": index === 0,
-                      " cursor-pointer": true,
-                    })}
-                  >
-                    <ImageCard
-                      imageSource={`/images/${image.imageSource}`}
-                      index={index}
-                      id={image.id}
-                    />
-                  </div>
-                );
-              })}
 
-              <div className="border border-gray border-dashed rounded h-full w-full flex items-center justify-center">
-                <div className="flex items-center flex-col gap-2">
-                  <ImImage className="w-8 h-8" />
-                  <p className="text-xs media500:text-base">Add Image</p>
-                </div>
+        <div className="grid mx-auto gap-2 sm:gap-3 px-2 md:gap-5 grid-cols-3 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 pb-5 justify-center items-center content-center justify-items-center  ">
+          {activeImages.map((image, index) => {
+            return (
+              <div
+                key={image.id}
+                className={classNames({
+                  "col-span-2 row-span-2": index === 0,
+                  " cursor-pointer": true,
+                })}
+              >
+                <ImageCard
+                  imageSource={`/images/${image.imageSource}`}
+                  index={index}
+                  id={image.id}
+                  moveImage={moveImage}
+                />
               </div>
-              {provided.placeholder}
+            );
+          })}
+
+          <div className="border border-gray border-dashed rounded h-full w-full flex items-center justify-center">
+            <div className="flex items-center flex-col gap-2">
+              <ImImage className="w-8 h-8" />
+              <p className="text-xs media500:text-base">Add Image</p>
             </div>
-          )}
-        </Droppable>
+          </div>
+        </div>
       </div>
     </GalleryCard>
   );
