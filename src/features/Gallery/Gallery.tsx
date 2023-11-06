@@ -7,18 +7,17 @@ import GalleryCard from "../../components/GalleryCard/GalleryCard";
 import { ImageContext } from "../../contexts/SelectedImageContext";
 
 const Gallery: React.FC = () => {
-  //state to track images after the deletion
-
   //create a new context for selected image context
   const context = useContext(ImageContext);
 
+  //handle drag and drop
   const moveImage = useCallback((dragIndex: number, hoverIndex: number) => {
-    setActiveImages((prevCards) => {
-      const clonedCards = [...prevCards];
-      const removedItem = clonedCards.splice(dragIndex, 1)[0];
+    setActiveImages((prevImages) => {
+      const clonedImages = [...prevImages];
+      const removedItem = clonedImages.splice(dragIndex, 1)[0];
 
-      clonedCards.splice(hoverIndex, 0, removedItem);
-      return clonedCards;
+      clonedImages.splice(hoverIndex, 0, removedItem);
+      return clonedImages;
     });
   }, []);
 
@@ -27,6 +26,7 @@ const Gallery: React.FC = () => {
     return null;
   }
 
+  //destructure the states and methods from the context
   const { selectedImage, setSelectedImage, activeImages, setActiveImages } =
     context;
 
@@ -72,7 +72,7 @@ const Gallery: React.FC = () => {
           )}
         </div>
 
-        <div className="grid mx-auto gap-2 sm:gap-3 px-2 md:gap-5 grid-cols-3 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 pb-5 justify-center items-center content-center justify-items-center  ">
+        <div className="grid mx-auto transition-all duration-1000 gap-2 sm:gap-3 px-2 md:gap-5 grid-cols-3 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 pb-5 justify-center items-center content-center justify-items-center  ">
           {activeImages.map((image, index) => {
             return (
               <div
@@ -92,9 +92,9 @@ const Gallery: React.FC = () => {
             );
           })}
 
-          <div className="border border-gray border-dashed rounded h-full w-full flex items-center justify-center">
+          <div className="border-2 border-gray-300 border-dashed py-20 rounded max-w-52 max-h-60 h-full w-full flex items-center justify-center">
             <div className="flex items-center flex-col gap-2">
-              <ImImage className="w-8 h-8" />
+              <ImImage className="w-10 h-10" />
               <p className="text-xs media500:text-base">Add Image</p>
             </div>
           </div>

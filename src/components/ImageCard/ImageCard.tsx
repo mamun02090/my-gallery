@@ -15,6 +15,7 @@ const ImageCard: React.FC<React.PropsWithChildren<Props>> = (props) => {
     id: number;
     index: number;
   };
+
   const [, drop] = useDrop({
     accept: "image",
     hover: (item: Item, monitor: DropTargetMonitor) => {
@@ -23,7 +24,7 @@ const ImageCard: React.FC<React.PropsWithChildren<Props>> = (props) => {
       }
       const dragIndex = item.index;
       const hoverIndex = index;
-
+      //handle the corner case of same index drag and drop
       if (dragIndex === hoverIndex) {
         return;
       }
@@ -83,17 +84,18 @@ const ImageCard: React.FC<React.PropsWithChildren<Props>> = (props) => {
     }
   };
 
-  const opacity = isDragging ? 0 : 1;
   drag(drop(ref));
 
   return (
     <div
       ref={ref}
-      style={{ opacity }}
       className={classNames({
         " md:w-[436px] md:h-[500px]": index === 0,
-        "relative  border flex border-gray rounded": true,
+        "relative border-2 flex border-gray-300 transition-all duration-500 rounded ":
+          true,
         " md:h-60 md:w-52": index !== 0,
+        "shadow md:h-60 md:w-52": isDragging,
+
         [className]: true,
       })}
       onMouseEnter={() => setIsImageHover(true)}
@@ -107,15 +109,20 @@ const ImageCard: React.FC<React.PropsWithChildren<Props>> = (props) => {
       ></img>
       <div
         className={classNames({
-          " absolute top-0 flex items-start justify-start h-full  rounded bg-overLayerColor z-50 ":
+          " absolute top-0 flex w-full items-start justify-start h-full transition-opacity duration-500 rounded bg-overLayerColor z-50 ":
             true,
-          "w-full ": isImageHover,
-          "w-0": !isImageHover,
+          " opacity-1 ": isImageHover,
+          "opacity-0": !isImageHover,
         })}
       >
         {isImageHover && (
           <input
-            className="absolute top-2 left-2  sm:top-5 flex sm:left-5 md:w-5 md:h-5 "
+            className={classNames({
+              "absolute top-2 left-2 transition-opacity duration-500 sm:top-5 flex sm:left-5 md:w-5 md:h-5 ":
+                true,
+              " opacity-1 ": isImageHover,
+              "opacity-0": !isImageHover,
+            })}
             type="checkbox"
             checked={selectedImage.includes(id) ? true : false}
             onChange={(e) => changeHandler(e)}
